@@ -17,6 +17,12 @@
 		},
 		{
 			"path": "mail-service"
+		},
+		{
+			"path": "listener-service"
 		}
-	]
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
 }
