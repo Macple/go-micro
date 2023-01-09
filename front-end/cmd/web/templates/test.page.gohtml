@@ -10,7 +10,7 @@
                 <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Auth</a>
                 <a id="logBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Log</a>
                 <a id="mailBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Mail</a>
-                <a id="logGBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test gRPC Log</a>
+                <a id="logGBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test gRPC log</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -66,7 +66,7 @@
             headers: headers,
         }
 
-        fetch("http:\/\/localhost:8080/handle", body)
+        fetch({{print .BrokerURL "/handle"}}, body)
         .then((response) => response.json())
         .then((data) => {
             sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -100,7 +100,7 @@
             headers: headers,
         }
 
-        fetch("http:\/\/localhost:8080/log-grpc", body)
+        fetch({{print .BrokerURL "/log-grpc"}}, body)
         .then((response) => response.json())
         .then((data) => {
             sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -112,7 +112,7 @@
             }
         })
         .catch((error) => {
-            output.innerHTML += "<br><br>Eror: " + error;
+            output.innerHTML += "<br><br>Error: " + error;
         })        
     })
 
@@ -135,7 +135,7 @@
             headers: headers,
         }
 
-        fetch("http:\/\/localhost:8080/handle", body)
+        fetch({{print .BrokerURL "/handle"}}, body)
         .then((response) => response.json())
         .then((data) => {
             sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -147,7 +147,7 @@
             }
         })
         .catch((error) => {
-            output.innerHTML += "<br><br>Eror: " + error;
+            output.innerHTML += "<br><br>Error: " + error;
         })        
     })
 
@@ -170,7 +170,7 @@
             headers: headers,
         }
 
-        fetch("http:\/\/localhost:8080/handle", body)
+        fetch({{print .BrokerURL "/handle"}}, body)
         .then((response) => response.json())
         .then((data) => {
             sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -192,7 +192,7 @@
             method: 'POST',
         }
 
-        fetch("http:\/\/localhost:8080", body)
+        fetch({{.BrokerURL}}, body)
         .then((response) => response.json())
         .then((data) => {
             sent.innerHTML ="empty post request";

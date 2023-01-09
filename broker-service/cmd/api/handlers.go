@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// RequestPayload describes the JSON that this service accepts as an HTTP Post request
 type RequestPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
@@ -24,6 +25,7 @@ type RequestPayload struct {
 	Mail   MailPayload `json:"mail,omitempty"`
 }
 
+// MailPayload is the embedded type (in RequestPayload) that describes an email message to be sent
 type MailPayload struct {
 	From    string `json:"from"`
 	To      string `json:"to"`
@@ -31,17 +33,21 @@ type MailPayload struct {
 	Message string `json:"message"`
 }
 
+// AuthPayload is the embedded type (in RequestPayload) that describes an authentication request
 type AuthPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
+// LogPayload is the embedded type (in RequestPayload) that describes a request to log something
 type LogPayload struct {
 	Name string `json:"name"`
 	Data string `json:"data"`
 }
 
+// Broker is a test handler, just to make sure we can hit the broker from a web client
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
+	log.Println("in the Broker handler")
 	payload := jsonResponse{
 		Error:   false,
 		Message: "Hit the broker",
@@ -74,7 +80,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// logItem calls the logger microservice and sends back the appropriate response
+// logItem logs an item by making an HTTP Post request with a JSON payload, to the logger microservice
 func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	log.Println("in logItem - broker service")
 	jsonData, _ := json.MarshalIndent(entry, "", "\t")
@@ -170,6 +176,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	app.writeJSON(w, http.StatusAccepted, payload)
 }
 
+// sendMail sends email by calling the mail microservice
 func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 	jsonData, _ := json.MarshalIndent(msg, "", "\t")
 
@@ -232,7 +239,11 @@ func (app *Config) pushToQueue(name, msg string) error {
 		Data: msg,
 	}
 
-	j, _ := json.MarshalIndent(&payload, "", "\t")
+	j, err := json.MarshalIndent(&payload, "", "\t")
+	if err != nil {
+		return err
+	}
+
 	err = emitter.Push(string(j), "log.INFO")
 	if err != nil {
 		return err
@@ -246,6 +257,7 @@ type RPCPayload struct {
 	Data string
 }
 
+// logItemViaRPC logs an item by making an RPC call to the logger microservice
 func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 	client, err := rpc.Dial("tcp", "logger-service:5001")
 	if err != nil {
